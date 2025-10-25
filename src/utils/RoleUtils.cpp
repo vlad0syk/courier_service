@@ -16,16 +16,16 @@ std::string roleToString(Role role) {
     }
 }
 
-Role stringToRole(const std::string& roleStr) {
-    std::transform(roleStr.begin(), roleStr.end(), roleStr.begin(), ::tolower);
+Role stringToRole(std::string roleStr) {
+    std::transform(roleStr.begin(), roleStr.end(), roleStr.begin(), [](unsigned char c){ return std::tolower(c); });
     if (roleStr == "client") {
         return Role::CLIENT;
     }
-    else if (roleStr == "courier") { 
+    else if (roleStr == "courier") {
         return Role::COURIER;
     }
-    else if (roleStr == "admin") { 
+    else if (roleStr == "admin") {
         return Role::ADMIN;
     }
-    throw std::invalid_argument("Invalid role string: " + roleStr);
+    throw std::invalid_argument("⚠️ Invalid role string: " + roleStr);
 }

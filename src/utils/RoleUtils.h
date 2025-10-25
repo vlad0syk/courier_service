@@ -5,6 +5,6 @@
 #include "../../include/Role.h"
 
 std::string roleToString(Role role);
-Role stringToRole(const std::string& roleStr);
+Role stringToRole(std::string roleStr);
 
 #endif
