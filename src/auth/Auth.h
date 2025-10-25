@@ -2,9 +2,7 @@
 #define AUTH_H
 
 #include <string>
-
-//User roles
-enum class Role {CLIENT = 0, COURIER = 1, ADMIN = 2};
+#include "../../include/Role.h"
 
 //User structure
 struct User {
