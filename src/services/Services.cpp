@@ -1,5 +1,7 @@
 #include "Services.h"
 #include <iostream>
+#include <limits>
+#include "../parcel/Parcel.h"
 
 void showServiceMenu(const std::string& userLogin) {
     int choice = 0;
@@ -20,7 +22,7 @@ void showServiceMenu(const std::string& userLogin) {
         switch (choice) {
             case 1:
                 std::cout << "🚀 Starting parcel creation module...\n";
-                //there would be code to create a parcel
+                createParcel(userLogin);
                 break;
             case 2:
             case 3:
