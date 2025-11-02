@@ -15,4 +15,7 @@ struct Parcel {
 
 void createParcel(const std::string& senderLogin);
 
+std::string generateParcelID();
+void saveParcel(const Parcel& parcel);
+
 #endif
