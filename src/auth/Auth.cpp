@@ -10,15 +10,17 @@
 
 static const std::string USERS_FILE = "data/users.txt";
 
-std::vector<User> loadUsers() {
+std::vector<User> loadUsers(const std::string& filepath) {
     std::vector<User> users; 
-    std::ifstream file(USERS_FILE);
+    std::ifstream file(filepath);
 
     if (!file.is_open()) {
-        std::cerr << "⚠️ Failed to open " << USERS_FILE << ". Creating a new one...\n";
-        createDirectory("data");
-        std::ofstream newFile(USERS_FILE);
-        newFile.close();
+        if (filepath == USERS_FILE) {
+             std::cerr << "⚠️ Failed to open " << filepath << ". Creating a new one...\n";
+             createDirectory("data");
+             std::ofstream newFile(filepath);
+             newFile.close();
+        }
         return users;
     }
 
@@ -48,18 +50,37 @@ std::vector<User> loadUsers() {
     return users;
 }
 
-void saveUser(const User& user) {
-    std::ofstream file(USERS_FILE, std::ios::app);
+void saveUser(const User& user, const std::string& filepath) {
+    std::ofstream file(filepath, std::ios::app);
     if (!file.is_open()) {
-        std::cerr << "❌ Failed to open file for writing!\n";
+        std::cerr << "❌ Failed to open file for writing: " << filepath << "\n";
         return;
     }
     file << user.login << ";" << user.password << ";" << roleToString(user.role) << "\n";
     file.close();
 }
 
+bool isUsernameTaken(const std::vector<User>& users, const std::string& login) {
+    for (const auto &u : users) {
+        if (u.login == login) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool validateCredentials(const std::vector<User>& users, const std::string& login, const std::string& password) {
+    for (const auto &u : users) {
+        if (u.login == login && u.password == password) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 std::string loginUser() {
-    std::vector<User> users = loadUsers();
+    std::vector<User> users = loadUsers(USERS_FILE);
     std::string login, password;
 
     std::cout << "\n=== Authentication ===\n";
@@ -81,11 +102,9 @@ std::string loginUser() {
     std::cout << "Password: ";
     std::getline(std::cin, password);
 
-    for (const auto &u : users) {
-        if (u.login == login && u.password == password) {
-            std::cout << "✅ Login successful. Welcome, " << login << "!\n";
-            return login;
-        }
+    if (validateCredentials(users, login, password)) {
+        std::cout << "✅ Login successful. Welcome, " << login << "!\n";
+        return login;
     }
 
     std::cout << "❌ Incorrect username or password.\n";
@@ -93,19 +112,18 @@ std::string loginUser() {
 }
 
 void registerUser() {
-    std::vector<User> users = loadUsers();
+    std::vector<User> users = loadUsers(USERS_FILE);
     User newUser;
 
     std::cout << "=== Register New User ===\n";
     std::cout << "Enter username: ";
     std::getline(std::cin, newUser.login);
 
-    for (const auto &u : users) {
-        if (u.login == newUser.login) {
-            std::cout << "❌ A user with that username already exists!\n";
-            return;
-        }
+    if (isUsernameTaken(users, newUser.login)) {
+        std::cout << "❌ A user with that username already exists!\n";
+        return;
     }
+    
     std::cout << "Enter password: ";
     std::getline(std::cin, newUser.password);
 
@@ -119,6 +137,6 @@ void registerUser() {
         return;
     }
 
-    saveUser(newUser);
+    saveUser(newUser, USERS_FILE);
     std::cout << "✅ Registration successful!\n";
 }
