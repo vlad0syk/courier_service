@@ -4,3 +4,4 @@
 - Vlad Sapozhnyk
 - Ivanna Shmarkatiuk
 - Maria Tarasenko
+- Maya Kravets
