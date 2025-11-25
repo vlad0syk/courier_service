@@ -8,12 +8,14 @@
 #include <sstream>
 #include <filesystem>
 
+// path to the file storing user data
 static const std::string USERS_FILE = "data/users.txt";
 
 std::vector<User> loadUsers(const std::string& filepath) {
     std::vector<User> users; 
     std::ifstream file(filepath);
 
+    // attempts to open the file, creating it if missing
     if (!file.is_open()) {
         if (filepath == USERS_FILE) {
              std::cerr << "⚠️ Failed to open " << filepath << ". Creating a new one...\n";
@@ -24,6 +26,7 @@ std::vector<User> loadUsers(const std::string& filepath) {
         return users;
     }
 
+    // reads the file line by line and parses user data
     std::string line;
     while (std::getline(file, line)) {
         std::stringstream ss(line);
@@ -51,6 +54,8 @@ std::vector<User> loadUsers(const std::string& filepath) {
 }
 
 void saveUser(const User& user, const std::string& filepath) {
+
+    // appends user data to the file using csv format
     std::ofstream file(filepath, std::ios::app);
     if (!file.is_open()) {
         std::cerr << "❌ Failed to open file for writing: " << filepath << "\n";
@@ -61,6 +66,8 @@ void saveUser(const User& user, const std::string& filepath) {
 }
 
 bool isUsernameTaken(const std::vector<User>& users, const std::string& login) {
+
+    // checks if the username already exists to prevent duplicates
     for (const auto &u : users) {
         if (u.login == login) {
             return true;
@@ -70,6 +77,8 @@ bool isUsernameTaken(const std::vector<User>& users, const std::string& login) {
 }
 
 bool validateCredentials(const std::vector<User>& users, const std::string& login, const std::string& password) {
+
+    // matches input credentials against the loaded user list
     for (const auto &u : users) {
         if (u.login == login && u.password == password) {
             return true;
@@ -83,6 +92,7 @@ std::string loginUser() {
     std::vector<User> users = loadUsers(USERS_FILE);
     std::string login, password;
 
+    // displays authentication menu and handles navigation
     std::cout << "\n=== Authentication ===\n";
     std::cout << "1. Login\n";
     std::cout << "2. Register\n";
@@ -102,6 +112,7 @@ std::string loginUser() {
     std::cout << "Password: ";
     std::getline(std::cin, password);
 
+    // validates inputs and returns the username if successful
     if (validateCredentials(users, login, password)) {
         std::cout << "✅ Login successful. Welcome, " << login << "!\n";
         return login;
@@ -115,6 +126,7 @@ void registerUser() {
     std::vector<User> users = loadUsers(USERS_FILE);
     User newUser;
 
+    // ensures the username is unique before proceeding
     std::cout << "=== Register New User ===\n";
     std::cout << "Enter username: ";
     std::getline(std::cin, newUser.login);
@@ -127,6 +139,7 @@ void registerUser() {
     std::cout << "Enter password: ";
     std::getline(std::cin, newUser.password);
 
+    // converts role input and saves the new user
     std::cout << "Enter role (client / courier / admin): ";
     std::string roleInput;
     std::getline(std::cin, roleInput);
